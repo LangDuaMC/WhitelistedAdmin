@@ -14,6 +14,10 @@ version = "1.0.0"
 
 repositories {
     maven(url = "https://papermc.io/repo/repository/maven-public/")
+    maven(url = "https://repo.extendedclip.com/content/repositories/placeholderapi/")
+    maven(url = "https://s01.oss.sonatype.org/content/repositories/snapshots/") {
+        name = "sonatype-oss-snapshots1"
+    }
     mavenCentral()
 }
 
@@ -22,6 +26,8 @@ repositories {
 dependencies {
     // PaperMC Dependency
     compileOnly("com.destroystokyo.paper", "paper-api", "1.16.5-R0.1-SNAPSHOT")
+    compileOnly("me.clip:placeholderapi:2.11.3")
+    implementation("net.kyori:adventure-text-minimessage:4.13.1")
 
     // Add your dependencies here
     // Examples

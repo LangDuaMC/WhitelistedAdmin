@@ -1,8 +1,8 @@
 name: WhitelistedAdmin
 version: '${project.version}'
-main: ankita.tudubucket.main
+main: net.langdua.wladmin.Plugin
 api-version: 1.18
-authors: [tudubucket]
+authors: [tudubucket, hUwUtao]
 description: A Minecraft plugin for Server Administrator safety purposes
 website: https://ankita.tudubucket.workers.dev
 prefix: WLAdmin
