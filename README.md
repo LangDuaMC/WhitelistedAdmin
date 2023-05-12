@@ -1,2 +1,0 @@
-# WhitelistedAdmin
-hallo
