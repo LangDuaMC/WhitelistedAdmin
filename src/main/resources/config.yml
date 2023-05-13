@@ -45,19 +45,19 @@ messages:
     unknown-admin: "{time} {player} have matched administrator permissions but not have whitelisted!"
     invalid-address: "{time} {player} have different IP address with whitelisted! Currently whitelisted address: %old_address%"
     success-whitelisted-ip: "{time} {player} have been whitelisted with IP address %ip_address%"
-    success-removed-admin: "{time} {player} have been removed rom administrator list"
+    success-removed-admin: "{time} {player} have been removed from administrator list"
   console:
     configuration-reloaded: 'Configuration reloaded!'
     invalid-command: 'Invalid command argument!'
     unknown-admin: "{time} {player} have matched administrator permissions but not have whitelisted!"
     invalid-address: "{time} {player} have different IP address with whitelisted! Currently whitelisted address: %old_address%"
     success-whitelisted-ip: "{time} {player} have been whitelisted with IP address %ip_address%"
-    success-removed-admin: "{time} {player} have been removed rom administrator list"
+    success-removed-admin: "{time} {player} have been removed from administrator list"
   integration:
     unknown-admin: "{time} {player} have matched administrator permissions but not have whitelisted!"
     invalid-address: "{time} {player} have different IP address with whitelisted! Currently whitelisted address: %old_address%"
     success-whitelisted-ip: "{time} {player} have been whitelisted with IP address %ip_address%"
-    success-removed-admin: "{time} {player} have been removed rom administrator list"
+    success-removed-admin: "{time} {player} have been removed from administrator list"
   kick:
     unknown-admin: "You have matched administrator permissions but not have whitelisted!"
     invalid-address: "You have different IP address with whitelisted!"
