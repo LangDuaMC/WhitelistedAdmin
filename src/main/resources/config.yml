@@ -16,7 +16,7 @@ permissions:
 whitelisted:
   remember-to-replace-this-to-your-admin-name: "127.0.0.1"
   you-can-add: "127.0.0.2"
-  as-much-player-as-you-want: "172.0.0.1"
+  as-much-player-as-you-want: "172.0.0.3"
 
 
 # Discord Integration support
