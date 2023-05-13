@@ -22,13 +22,15 @@ repositories {
     mavenCentral()
 }
 
-// val minecraft_version: String = "1.16.5"
+val minecraftVersion: String = project.extra["minecraftVersion"].toString()
+val bstatsID: String = project.extra["bstatsID"].toString()
 
 dependencies {
     // PaperMC Dependency
-    compileOnly("com.destroystokyo.paper", "paper-api", "1.16.5-R0.1-SNAPSHOT")
-    compileOnly("me.clip:placeholderapi:2.11.3")
-    implementation("net.kyori:adventure-text-minimessage:4.13.1")
+    compileOnly("com.destroystokyo.paper", "paper-api", "$minecraftVersion-R0.1-SNAPSHOT")
+    compileOnly("me.clip", "placeholderapi", "2.11.3")
+    implementation("org.bstats", "bstats-bukkit", "3.0.2")
+    implementation("net.kyori", "adventure-text-minimessage", "4.13.1")
 
     // Add your dependencies here
     // Examples
@@ -44,6 +46,7 @@ buildConfig {
     val branch = getGitBranch()
     buildConfigField("String", "GIT_COMMIT", "\"$commit\"")
     buildConfigField("String", "GIT_BRANCH", "\"$branch\"")
+    buildConfigField("Int", "BSTATS_ID", bstatsID)
 }
 
 fun getGitHash(): String {
