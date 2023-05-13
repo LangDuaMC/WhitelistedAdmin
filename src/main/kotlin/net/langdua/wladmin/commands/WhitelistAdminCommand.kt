@@ -15,8 +15,8 @@ import java.util.*
 import javax.sql.rowset.spi.SyncFactoryException
 
 class WhitelistAdminCommand(private val plugin: Plugin) : CommandExecutor, Listener {
-    private val config = plugin.conf
-    private val discordIntegration = DiscordIntegration(config)
+    private val config = plugin.config
+    private val discord = DiscordIntegration(config)
     override fun onCommand(sender: CommandSender, command: Command, label: String, args: Array<String>): Boolean {
         if (args.isEmpty()) {
             SendMessage.send(sender, "&c&oWhitelistedAdmin &r&eby &6tudubucket")
@@ -42,7 +42,7 @@ class WhitelistAdminCommand(private val plugin: Plugin) : CommandExecutor, Liste
             SendMessage.send(sender, "$playerName has been added to the whitelist.")
             if (config.getBoolean("integrations.discord.enabled")) {
                 try {
-                    discordIntegration.sendMessage(config.getString("messages.integration.success-whitelisted-admin")!!)
+                    discord.sendMessage(config.getString("messages.integration.success-whitelisted-admin")!!)
                 } catch (e: IOException) {
                     throw RuntimeException(e)
                 } catch (e: SyncFactoryException) {
@@ -55,7 +55,7 @@ class WhitelistAdminCommand(private val plugin: Plugin) : CommandExecutor, Liste
         if (args[0] == "-" && args.size == 2) {
             // Remove player from the whitelist
             val playerName = args[1]
-    
+
             if (config.contains("whitelisted.$playerName")) {
                 config["whitelisted.$playerName"] = null
                 try {
@@ -66,7 +66,7 @@ class WhitelistAdminCommand(private val plugin: Plugin) : CommandExecutor, Liste
                 SendMessage.send(sender, "$playerName has been removed from the whitelist.")
                 if (config.getBoolean("integrations.discord.enabled")) {
                     try {
-                        discordIntegration.sendMessage(config.getString("messages.integration.success-removed-admin")!!)
+                        discord.sendMessage(config.getString("messages.integration.success-removed-admin")!!)
                     } catch (e: IOException) {
                         throw RuntimeException(e)
                     } catch (e: SyncFactoryException) {
@@ -98,7 +98,7 @@ class WhitelistAdminCommand(private val plugin: Plugin) : CommandExecutor, Liste
                 player.kick(config.getAdventureComponent("messages.kick.unknown-admin"))
                 if (config.getBoolean("integrations.discord.enabled")) {
                     try {
-                        discordIntegration.sendMessage(config.getString("messages.integration.unknown-admin")!!)
+                        discord.sendMessage(config.getString("messages.integration.unknown-admin")!!)
                     } catch (e: IOException) {
                         throw RuntimeException(e)
                     } catch (e: SyncFactoryException) {
@@ -116,7 +116,7 @@ class WhitelistAdminCommand(private val plugin: Plugin) : CommandExecutor, Liste
         if (storedIP != null && storedIP != playerIP) {
             player.kick(config.getAdventureComponent("messages.kick.invalid-address"))
             if (config.getBoolean("integrations.discord.enabled")) {
-                discordIntegration.sendMessage(config.getString("messages.integration.invalid-address")!!)
+                discord.sendMessage(config.getString("messages.integration.invalid-address")!!)
             }
         }
     }

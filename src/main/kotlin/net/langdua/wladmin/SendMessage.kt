@@ -8,13 +8,13 @@ import org.bukkit.entity.Player
 
 class SendMessage {
     companion object {
-        fun send(sender: CommandSender, message: String) {
-            if (sender is Player) {
-                val msg: String = PlaceholderAPI.setPlaceholders(sender, message)
-                sender.sendMessage(ChatColor.translateAlternateColorCodes('&', msg))
+        fun send(sender: CommandSender?, message: String) {
+            val msg =
+                ChatColor.translateAlternateColorCodes('&', PlaceholderAPI.setPlaceholders(sender as Player?, message))
+            if (sender != null) {
+                sender.sendMessage(msg)
             } else {
-                val msg: String = PlaceholderAPI.setPlaceholders(null, message)
-                Bukkit.getServer().consoleSender.sendMessage(ChatColor.translateAlternateColorCodes('&', msg))
+                Bukkit.getServer().consoleSender.sendMessage(msg)
             }
         }
     }

@@ -7,6 +7,7 @@ plugins {
     kotlin("jvm") version "1.5.10"
     id("com.github.johnrengelman.shadow") version "7.0.0"
     id("com.github.gmazzo.buildconfig") version "3.0.0"
+    id("org.jlleitschuh.gradle.ktlint") version "11.3.2"
 }
 
 group = "net.langdua"
@@ -21,7 +22,7 @@ repositories {
     mavenCentral()
 }
 
-//val minecraft_version: String = "1.16.5"
+// val minecraft_version: String = "1.16.5"
 
 dependencies {
     // PaperMC Dependency
@@ -48,7 +49,7 @@ buildConfig {
 fun getGitHash(): String {
     val stdout = ByteArrayOutputStream()
     exec {
-        commandLine( "git", "rev-parse", "--short", "HEAD")
+        commandLine("git", "rev-parse", "--short", "HEAD")
         standardOutput = stdout
     }
     return stdout.toString("UTF-8").trim()
@@ -57,7 +58,7 @@ fun getGitHash(): String {
 fun getGitBranch(): String {
     val stdout = ByteArrayOutputStream()
     exec {
-        commandLine( "git", "rev-parse", "--abbrev-ref", "HEAD")
+        commandLine("git", "rev-parse", "--abbrev-ref", "HEAD")
         standardOutput = stdout
     }
     return stdout.toString("UTF-8").trim()

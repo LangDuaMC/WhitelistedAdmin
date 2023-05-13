@@ -1,7 +1,5 @@
 package net.langdua.wladmin
 
-import net.kyori.adventure.text.minimessage.MiniMessage
-import net.langdua.bootstrap.ConfigManager
 import net.langdua.bootstrap.PluginBootstrap
 import net.langdua.wladmin.commands.WhitelistAdminCommand
 import org.bukkit.Bukkit
