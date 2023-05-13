@@ -1,45 +1,58 @@
 package net.langdua.wladmin
 
+import net.langdua.bootstrap.PluginConfig
 import org.bukkit.Bukkit
-import org.bukkit.configuration.file.FileConfiguration
+import org.bukkit.configuration.ConfigurationSection
 import java.io.IOException
 import java.net.HttpURLConnection
 import java.net.URL
 import java.nio.charset.StandardCharsets
 import javax.sql.rowset.spi.SyncFactoryException
 
-class DiscordIntegration(config: FileConfiguration) {
-    private val sendMethod: String?
-    private val botToken: String?
-    private val webhookUrl: String?
-    private val alertChannelId: String?
+class DiscordIntegration(pluginConfig: PluginConfig) {
+    private val config = pluginConfig.getConfigurationSection("integrations.discord")?.let { Config.fromConfig(it) }
 
-    init {
-        val discordConfig = config.getConfigurationSection("integrations.discord")!!
-        sendMethod = discordConfig.getString("method")
-        botToken = discordConfig.getString("bot-token")
-        webhookUrl = discordConfig.getString("webhook-url")
-        alertChannelId = discordConfig.getString("alert-channel-id")
+    class Config(
+        val method: String?,
+        val token: String?,
+        val url: String?,
+        val channelId: String?
+    ) {
+        companion object {
+            fun fromConfig(config: ConfigurationSection): Config {
+                return Config(
+                    config.getString("method"),
+                    config.getString("bot-token"),
+                    config.getString("webhook-url"),
+                    config.getString("alert-channel-id")
+                )
+            }
+        }
     }
 
     @Throws(IOException::class, SyncFactoryException::class)
     fun sendMessage(message: String) {
+        if (config == null) {
+            throw IllegalStateException("Improper Discord hook configuration")
+        }
         try {
-            if ((sendMethod == "webhook" || sendMethod == "bot") &&
-                (sendMethod == "bot" && !botToken.isNullOrBlank()) ||
-                (sendMethod == "webhook" && !webhookUrl.isNullOrBlank())
+            if ((config.method == "webhook" || config.method == "bot") &&
+                (config.method == "bot" && !config.token.isNullOrBlank()) ||
+                (config.method == "webhook" && !config.url.isNullOrBlank())
             ) {
                 val connection =
-                    URL(if (sendMethod == "bot") "https://discord.com/api/channels/$alertChannelId/messages" else webhookUrl).openConnection() as HttpURLConnection
-                if (sendMethod == "bot") botToken?.let {
-                    connection.setRequestProperty("Authorization", "Bot $it")
+                    URL(if (config.method == "bot") "https://discord.com/api/channels/${config.channelId}/messages" else config.url).openConnection() as HttpURLConnection
+                if (config.method == "bot") {
+                    config.token?.let {
+                        connection.setRequestProperty("Authorization", "Bot $it")
+                    }
                 }
                 connection.requestMethod = "POST"
                 connection.setRequestProperty("Content-Type", "application/json")
                 connection.doOutput = true
                 val outputStream = connection.outputStream
                 val payload =
-                    "{\"content\":\"$message\"}"// Both bot token and webhook url are not defined// Sending message using a webhook
+                    "{\"content\":\"$message\"}" // Both bot token and webhook url are not defined// Sending message using a webhook
                 outputStream.write(payload.toByteArray(StandardCharsets.UTF_8))
                 outputStream.flush()
                 outputStream.close()

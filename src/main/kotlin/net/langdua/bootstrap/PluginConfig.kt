@@ -4,7 +4,7 @@ import net.kyori.adventure.text.Component
 import net.langdua.wladmin.Plugin
 import org.bukkit.configuration.file.FileConfiguration
 
-class ConfigManager(private val plugin: Plugin) : FileConfiguration() {
+class PluginConfig(private val plugin: Plugin) : FileConfiguration() {
     override fun saveToString(): String {
         TODO("Not yet implemented")
     }
