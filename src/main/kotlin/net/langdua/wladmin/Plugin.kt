@@ -1,6 +1,7 @@
 package net.langdua.wladmin
 
 import net.langdua.bootstrap.PluginBootstrap
+import net.langdua.wladmin.Plugin
 import net.langdua.wladmin.commands.WhitelistAdminCommand
 import org.bukkit.Bukkit
 import org.bukkit.configuration.file.YamlConfiguration
@@ -9,8 +10,10 @@ import java.util.*
 
 class Plugin : PluginBootstrap() {
     val whitelistFolder = File(dataFolder, "WhitelistedAdmin")
+    lateinit val metrics: Metrics
     private val configFile = File(dataFolder, "config.yml")
     override fun onEnable() {
+        this.metrics = Metrics(this, BuildConfig.BSTATS_ID)
         if (!configFile.exists()) saveDefaultConfig()
         config.options().copyDefaults(true)
         saveDefaultConfig()

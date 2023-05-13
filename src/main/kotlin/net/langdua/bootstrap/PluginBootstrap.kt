@@ -8,7 +8,6 @@ import org.bukkit.plugin.java.JavaPlugin
 
 abstract class PluginBootstrap : JavaPlugin(), Listener {
     val mm = MiniMessage.miniMessage()
-    val metrics = Metrics(this, BuildConfig.BSTATS_ID)
 
     // Implement
     val config = this.getConfig() as PluginConfig
