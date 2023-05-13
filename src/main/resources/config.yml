@@ -1,11 +1,9 @@
 # WhitelistedAdmin configuration
 
-
 # Placeholder list:
 #   {player}: Player name
 #   {address}: Player IP Address in PlayerJoinEvent
 #   {current_address}: Player IP Address in the configuration
-
 
 # List of permissions to check
 # Wildcard (e.g. "bukkit.*") are supported, it will check if the player have any permission starting with "bukkit.", for example.
