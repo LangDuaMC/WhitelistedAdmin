@@ -13,7 +13,7 @@ class Plugin : PluginBootstrap() {
     val whitelistFolder = File(dataFolder, "WhitelistedAdmin")
     private val configFile = File(dataFolder, "config.yml")
     override fun onEnable() {
-        val metrics = Metrics(this, BuildConfig.BSTATS_ID)
+        // val metrics = Metrics(this, BuildConfig.BSTATS_ID)
         if (!configFile.exists()) saveDefaultConfig()
         config.options().copyDefaults(true)
         saveDefaultConfig()
