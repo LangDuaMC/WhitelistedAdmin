@@ -19,7 +19,6 @@ class Plugin : PluginBootstrap() {
         saveDefaultConfig()
         YamlConfiguration.loadConfiguration(configFile)
         Objects.requireNonNull(getCommand("whitelist-admin"))?.setExecutor(WhitelistAdminCommand(this))
-
         // Register the listener
         Bukkit.getPluginManager().registerEvents(WhitelistAdminCommand(this), this)
         if (Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null) {
