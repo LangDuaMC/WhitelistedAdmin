@@ -19,17 +19,15 @@ class WhitelistAdminCommand(private val plugin: Plugin) : CommandExecutor, Liste
     private val discord = DiscordIntegration(config)
     override fun onCommand(sender: CommandSender, command: Command, label: String, args: Array<String>): Boolean {
         if (args.isEmpty()) {
-            SendMessage.send(sender, "&c&oWhitelistedAdmin &r&eby &6tudubucket")
+            SendMessage.send(sender, "&c&oWhitelistedAdmin &r&eby &6LangDuaMC developers [tudubucket, hUwUtao]")
             SendMessage.send(sender, "&6For help, type &e/help")
             return false
-        }
-        if (args[0] == "reload-config") {
+        } else if (args[0] == "reload") {
             // Reload the config
             plugin.reloadConfig()
             SendMessage.send(sender, "Configuration reloaded.")
             return true
-        }
-        if (args[0] == "+" && args.size == 3) {
+        } else if (args[0] == "+" && args.size == 3) {
             // Add player to the whitelist
             val playerName = args[1]
             val ip = args[2]
@@ -51,8 +49,7 @@ class WhitelistAdminCommand(private val plugin: Plugin) : CommandExecutor, Liste
             }
             plugin.reloadConfig()
             return true
-        }
-        if (args[0] == "-" && args.size == 2) {
+        } else if (args[0] == "-" && args.size == 2) {
             // Remove player from the whitelist
             val playerName = args[1]
 

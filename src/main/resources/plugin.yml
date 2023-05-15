@@ -6,7 +6,7 @@ authors: [tudubucket, hUwUtao]
 description: A Minecraft plugin for Server Administrator safety purposes
 website: https://github.com/LangDuaMC/WhitelistedAdmin
 prefix: WLAdmin
-softdepend: [PlaceholderAPI]
+depend:  [PlaceholderAPI]
 commands:
   whitelist-admin:
     description: Main command for WhitelistedAdmin plugin

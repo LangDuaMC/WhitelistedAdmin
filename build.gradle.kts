@@ -77,6 +77,9 @@ tasks {
         // Disabled, because we use the shadowJar task for building our jar
         enabled = false
     }
+    shadowJar {
+        relocate("org.bstats", "net.langdua.reflected.wladmin.org.bstats")
+    }
     build {
         dependsOn(shadowJar)
     }
