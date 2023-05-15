@@ -1,15 +1,15 @@
 package net.langdua.wladmin
 
-import net.langdua.bootstrap.PluginConfig
 import org.bukkit.Bukkit
 import org.bukkit.configuration.ConfigurationSection
+import org.bukkit.configuration.file.FileConfiguration
 import java.io.IOException
 import java.net.HttpURLConnection
 import java.net.URL
 import java.nio.charset.StandardCharsets
 import javax.sql.rowset.spi.SyncFactoryException
 
-class DiscordIntegration(pluginConfig: PluginConfig) {
+class DiscordIntegration(pluginConfig: FileConfiguration) {
     private val config = pluginConfig.getConfigurationSection("integrations.discord")?.let { Config.fromConfig(it) }
 
     class Config(

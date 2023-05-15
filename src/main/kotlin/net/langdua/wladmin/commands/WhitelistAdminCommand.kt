@@ -95,7 +95,7 @@ class WhitelistAdminCommand(private val plugin: Plugin) : CommandExecutor, Liste
         val checkValid = config.getString("whitelisted.$player")
         for (permission in permissions) {
             if (player.hasPermission(permission!!) && checkValid == null) {
-                player.kick(config.getAdventureComponent("messages.kick.unknown-admin"))
+                player.kick(plugin.utility.getAdventureComponent("messages.kick.unknown-admin"))
                 if (config.getBoolean("integrations.discord.enabled")) {
                     try {
                         discord.sendMessage(config.getString("messages.integration.unknown-admin")!!)
@@ -114,7 +114,7 @@ class WhitelistAdminCommand(private val plugin: Plugin) : CommandExecutor, Liste
         val playerIP = Objects.requireNonNull(player.address).hostString
         val storedIP = config.getString("whitelisted.$playerName")
         if (storedIP != null && storedIP != playerIP) {
-            player.kick(config.getAdventureComponent("messages.kick.invalid-address"))
+            player.kick(plugin.utility.getAdventureComponent("messages.kick.invalid-address"))
             if (config.getBoolean("integrations.discord.enabled")) {
                 discord.sendMessage(config.getString("messages.integration.invalid-address")!!)
             }

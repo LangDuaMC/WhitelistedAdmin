@@ -1,6 +1,7 @@
 package net.langdua.wladmin
 
 import net.langdua.bootstrap.PluginBootstrap
+import net.langdua.bootstrap.Utility
 import net.langdua.main.BuildConfig
 import net.langdua.wladmin.commands.WhitelistAdminCommand
 import org.bstats.bukkit.Metrics
@@ -12,8 +13,9 @@ import java.util.*
 class Plugin : PluginBootstrap() {
     val whitelistFolder = File(dataFolder, "WhitelistedAdmin")
     private val configFile = File(dataFolder, "config.yml")
+    private var metrics: Metrics? = null
+    var utility = Utility(this)
     override fun onEnable() {
-        // val metrics = Metrics(this, BuildConfig.BSTATS_ID)
         if (!configFile.exists()) saveDefaultConfig()
         config.options().copyDefaults(true)
         saveDefaultConfig()
@@ -35,6 +37,7 @@ class Plugin : PluginBootstrap() {
             print("Could not find PlaceholderAPI! This plugin is required.")
             Bukkit.getPluginManager().disablePlugin(this)
         }
+        metrics = Metrics(this, BuildConfig.BSTATS_ID)
     }
 
     override fun onDisable() {

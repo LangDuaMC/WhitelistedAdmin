@@ -1,10 +1,10 @@
 name: WhitelistedAdmin
-version: '${project.version}'
+version: '1.0.0'
 main: net.langdua.wladmin.Plugin
-api-version: 1.18
+api-version: 1.16
 authors: [tudubucket, hUwUtao]
 description: A Minecraft plugin for Server Administrator safety purposes
-website: https://ankita.tudubucket.workers.dev
+website: https://github.com/LangDuaMC/WhitelistedAdmin
 prefix: WLAdmin
 softdepend: [PlaceholderAPI]
 commands:
