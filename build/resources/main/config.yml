@@ -1,0 +1,65 @@
+# WhitelistedAdmin configuration
+
+# Placeholders list:
+#   {player}: Player name
+#   {address}: Player IP Address when joined
+#   {current_address}: Player IP Address in the configuration
+
+# Date format for messages
+date-format: "yyyy-MM-dd HH:MM:SS"
+
+# List of permissions to check whether the joined player is an admin or not (only if they are not whitelisted)
+# Wildcards (e.g. "bukkit.*") are supported, it will check if the player has any permission starting with "bukkit.", for example.
+admin-permissions:
+  - "bukkit.plugin"
+  - "bukkit.?"
+  - "idk"
+
+# Discord Integration support
+integrations:
+  discord:
+    enable: true
+    # Method: "webhook" or "bot"
+    method: "bot"
+
+    bot:
+      token: "insert-your-bot-token-here"
+      # For more information about getting a Channel ID, refer to https://support.discord.com/hc/en-us/articles/206346498
+      alert-channel-id: "0123456789123456789"
+
+    webhook:
+      url: "https://discord.com/api/webhooks/0123456789123456789/webhook-token"
+
+# Hide the plugin
+plugin:
+  hide: true
+  message-unknown-command: 'Unknown command. Type "/help" for help.'
+
+# Messages to announce to integrations, placeholder, and color code supported
+messages:
+  logging:
+    unknown-admin: "{time} {player} have matched administrator permissions but not have whitelisted!"
+    invalid-address: "{time} {player} have different IP address with whitelisted! Currently whitelisted address: {current_address}"
+    success-whitelisted-ip: "{time} {player} have been whitelisted with IP address {current_address}"
+    success-removed-admin: "{time} {player} have been removed from administrator list"
+  console:
+    configuration-reloaded: 'Configuration reloaded!'
+    invalid-command: 'Invalid command argument!'
+    unknown-admin: "{time} {player} have matched administrator permissions but not have whitelisted!"
+    invalid-address: "{time} {player} have different IP address with whitelisted! Current whitelisted address: {current_address}"
+    success-whitelisted-ip: "{time} {player} have been whitelisted with IP address {current_address}"
+    success-removed-admin: "{time} {player} have been removed from administrator list"
+  integration:
+    unknown-admin: "{time} {player} have matched administrator permissions but not have whitelisted!"
+    invalid-address: "{time} {player} have different IP address with whitelisted! Current whitelisted address: {current_address}"
+    success-whitelisted-ip: "{time} {player} have been whitelisted with IP address {current_address}"
+    success-removed-admin: "{time} {player} have been removed from administrator list"
+  kick:
+    unknown-admin: "You have matched administrator permissions but not have whitelisted!"
+    invalid-address: "You have a different IP address than the whitelisted one!"
+
+
+# List of whitelisted administrators and their IP address
+whitelisted-admins:
+  admin1: "127.0.0.1"
+  admin2: "127.0.0.1"
