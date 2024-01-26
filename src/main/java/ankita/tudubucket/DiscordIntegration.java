@@ -24,9 +24,9 @@ public class DiscordIntegration {
         ConfigurationSection discordConfig = config.getConfigurationSection("integrations.discord");
         assert discordConfig != null;
         sendMethod = discordConfig.getString("method");
-        botToken = discordConfig.getString("bot-token");
-        webhookUrl = discordConfig.getString("webhook-url");
-        alertChannelId = discordConfig.getString("alert-channel-id");
+        botToken = discordConfig.getString("bot.token");
+        webhookUrl = discordConfig.getString("webhook.url");
+        alertChannelId = discordConfig.getString("bot.alert-channel-id");
     }
 
     public void sendMessage(String message) throws IOException, SyncFactoryException {

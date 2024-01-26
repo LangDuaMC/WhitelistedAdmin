@@ -10,7 +10,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
-import org.bukkit.event.player.PlayerLoginEvent;
+import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 
@@ -40,7 +40,44 @@ public class WhitelistAdminCommand implements CommandExecutor, Listener {
                 .replace("{current_address}", ipAddress);
     }
 
+    public static boolean isValidIPv4(String ip) {
+        String[] octets = ip.split("\\.");
+
+        if (octets.length != 4) {
+            return false;
+        }
+
+        for (String octet : octets) {
+            try {
+                int num = Integer.parseInt(octet);
+                if (num < 0 || num > 255) {
+                    return false;
+                }
+            } catch (NumberFormatException e) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
     private final JavaPlugin plugin;
+
+    public void sendAnnouncement(String message) {
+
+        FileConfiguration config = plugin.getConfig();
+        DiscordIntegration Discord = new DiscordIntegration(config);
+
+        if (Objects.equals(config.getBoolean("integrations.discord.enable"), true)) {
+            try {
+                Discord.sendMessage(message);
+            } catch (IOException | SyncFactoryException e) {
+                throw new RuntimeException(e);
+            }
+        }
+    }
+
+
 
 
     @Override
@@ -73,6 +110,10 @@ public class WhitelistAdminCommand implements CommandExecutor, Listener {
             // Add player to the whitelist
             String playerName = args[1];
             String ip = args[2];
+            if (!isValidIPv4(ip)) {
+                SendMessage.send(sender, ip + " is not a valid IPv4 address.");
+                return false;
+            }
             FileConfiguration config = plugin.getConfig();
             config.set("whitelisted." + playerName, ip);
             try {
@@ -80,15 +121,8 @@ public class WhitelistAdminCommand implements CommandExecutor, Listener {
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            DiscordIntegration Discord = new DiscordIntegration(plugin.getConfig());
             SendMessage.send(sender, playerName + " has been added to the whitelist.");
-            if(Objects.equals(config.getBoolean("integrations.discord.enabled"), true)) {
-                try {
-                    Discord.sendMessage(getConfigMessage("messages.integration.success-whitelisted-admin", args[1], args[2]));
-                } catch (IOException | SyncFactoryException e) {
-                    throw new RuntimeException(e);
-                }
-            }
+            sendAnnouncement(getConfigMessage("messages.integration.success-whitelisted-admin", args[1], args[2]));
             plugin.reloadConfig();
             return true;
         }
@@ -112,15 +146,8 @@ public class WhitelistAdminCommand implements CommandExecutor, Listener {
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-                DiscordIntegration Discord = new DiscordIntegration(plugin.getConfig());
                 SendMessage.send(sender, playerName + " has been removed from the whitelist.");
-                if(Objects.equals(config.getBoolean("integrations.discord.enabled"), true)) {
-                    try {
-                        Discord.sendMessage(getConfigMessage("messages.integration.success-removed-admin", args[1], "null"));
-                    } catch (IOException | SyncFactoryException e) {
-                        throw new RuntimeException(e);
-                    }
-                }
+                sendAnnouncement(getConfigMessage("messages.integration.success-removed-admin", args[1], "null"));
                 plugin.reloadConfig();
             } else {
                 SendMessage.send(sender, playerName + " does not in the whitelist.");
@@ -134,12 +161,12 @@ public class WhitelistAdminCommand implements CommandExecutor, Listener {
     }
 
     @EventHandler
-    public void onPlayerPreLogin(AsyncPlayerPreLoginEvent event) throws SyncFactoryException, IOException {
+    public void onPlayerPreLogin(AsyncPlayerPreLoginEvent event) {
         FileConfiguration config = plugin.getConfig();
 
         String player = event.getName();
         String playerIP = event.getAddress().toString();
-        String storedIP = config.getString("whitelisted." + playerIP);
+        String storedIP = config.getString("whitelisted." + player);
 
         if (storedIP != null && !storedIP.equals(playerIP)) {
             event.disallow(
@@ -147,30 +174,22 @@ public class WhitelistAdminCommand implements CommandExecutor, Listener {
                 getConfigMessage("messages.kick.invalid-address", player, playerIP)
             );
 
-            if(Objects.equals(config.getBoolean("integrations.discord.enabled"), true)) {
-                DiscordIntegration Discord = new DiscordIntegration(plugin.getConfig());
-                Discord.sendMessage(getConfigMessage("messages.integration.invalid-address", player, playerIP));
-            }
+            sendAnnouncement(getConfigMessage("messages.integration.invalid-address", player, playerIP));
         }
     }
     @EventHandler
-    public void onPlayerJoin(PlayerLoginEvent event) {
+    public void onPlayerJoin(PlayerJoinEvent event) {
         FileConfiguration config = plugin.getConfig();
 
         List<String> permissions = config.getStringList("admin-permissions");
         Player player = event.getPlayer();
-        if (config.getString("whitelisted." + player) == null) {
+        // SendMessage.send(player, String.join(", ", permissions));
+        if (config.getString("whitelisted." + player.getName()) == null) {
             for (String permission: permissions) {
+                // SendMessage.send(player, permission + ": " + player.hasPermission(permission));
                 if (player.hasPermission(permission)) {
                     player.kickPlayer(getConfigMessage("messages.kick.unknown-admin", player.getName(), Objects.toString(player.getAddress())));
-                    if(Objects.equals(config.getBoolean("integrations.discord.enabled"), true)) {
-                        try {
-                            DiscordIntegration Discord = new DiscordIntegration(plugin.getConfig());
-                            Discord.sendMessage(getConfigMessage("messages.integration.unknown-admin", player.getName(), Objects.toString(player.getAddress())));
-                        } catch (IOException | SyncFactoryException e) {
-                            throw new RuntimeException(e);
-                        }
-                    }
+                    sendAnnouncement(getConfigMessage("messages.integration.unknown-admin", player.getName(), Objects.toString(player.getAddress())));
                     return;
                 }
             }
