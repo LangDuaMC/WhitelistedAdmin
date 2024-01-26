@@ -12,7 +12,6 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.jetbrains.annotations.NotNull;
 
 import javax.sql.rowset.spi.SyncFactoryException;
 import java.io.File;
@@ -77,12 +76,8 @@ public class WhitelistAdminCommand implements CommandExecutor, Listener {
         }
     }
 
-
-
-
     @Override
-    public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, String[] args) {
-
+    public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
 
         if (args.length == 0) {
             SendMessage.send(sender, "&c&oWhitelistedAdmin &r&eby &6tudubucket");
