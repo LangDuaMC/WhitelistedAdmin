@@ -110,7 +110,7 @@ public class WhitelistAdminCommand implements CommandExecutor, Listener {
                         player.kickPlayer(ChatColor.translateAlternateColorCodes('&', getConfigMessage("messages.kick.unknown-admin", player.getName(), Objects.toString(player.getAddress()))));
                         sendAnnouncement(getConfigMessage("messages.integration.unknown-admin", player.getName(), Objects.toString(player.getAddress())));
                         String ftype = "";
-                        if (type.equals("LOGIN")) {
+                        if (type.equals("JOIN")) {
                             ftype = "login";
                         }
                         else if (type.equals("COMMAND_PRE_PROCESS")) {
