@@ -11,12 +11,17 @@ date-format: "yyyy-MM-dd HH:MM:SS"
 # List of permissions to check whether the joined player is an admin or not (only if they are not whitelisted)
 # Wildcards (e.g. "bukkit.*") are supported, it will check if the player has any permission starting with "bukkit.", for example.
 admin-permissions:
-  - "bukkit.plugin"
-  - "bukkit.?"
-  - "idk"
+ - "*" # All permissions
+ - "luckperms.*"
+ - "essentials.gamemode.creative"
+ - "essentials.gamemode"
+
+# List of commands to bypass permissions check above (NPC/MyCMD/Skript Compatibility)
+ignore-commands:
+ - "/help"
 
 # Discord Integration support
-integrations:
+integrations: 
   discord:
     enable: false
     # Method: "webhook" or "bot"
