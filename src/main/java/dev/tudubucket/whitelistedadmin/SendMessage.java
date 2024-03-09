@@ -1,4 +1,4 @@
-package ankita.tudubucket;
+package dev.tudubucket.whitelistedadmin;
 
 import me.clip.placeholderapi.PlaceholderAPI;
 import org.bukkit.Bukkit;

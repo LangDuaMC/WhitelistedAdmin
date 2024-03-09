@@ -55,11 +55,17 @@ messages:
     success-whitelisted-ip: "{time} {player} have been whitelisted with IP address {current_address}"
     success-removed-admin: "{time} {player} have been removed from administrator list"
   kick:
-    unknown-admin: "You have matched administrator permissions but not have whitelisted!"
-    invalid-address: "You have a different IP address than the whitelisted one!"
+    unknown-admin: |
+      &c» &r&6&lWhitelisted&4&lAdmin&c « 
+
+      &cYour Administrative login session into server was invalid. A record has been logged and sent.
+    invalid-address: |
+      &c» &r&6&lWhitelisted&4&lAdmin&c « 
+
+      &cYour Administrative login session into server was invalid. A record has been logged and sent.
 
 
 # List of whitelisted administrators and their IP address
-whitelisted-admins:
+whitelisted:
   admin1: "127.0.0.1"
   admin2: "127.0.0.1"

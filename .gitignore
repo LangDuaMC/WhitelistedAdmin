@@ -80,3 +80,6 @@ fabric.properties
 /.gradle
 /.idea
 /.github
+/target
+/bin
+build.gradle

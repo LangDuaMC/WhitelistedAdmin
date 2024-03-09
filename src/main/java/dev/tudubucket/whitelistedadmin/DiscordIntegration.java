@@ -1,4 +1,4 @@
-package ankita.tudubucket;
+package dev.tudubucket.whitelistedadmin;
 
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;

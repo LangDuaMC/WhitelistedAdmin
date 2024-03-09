@@ -1,7 +1,7 @@
 name: WhitelistedAdmin
 version: '${project.version}'
-main: ankita.tudubucket.main
-api-version: 1.18
+main: dev.tudubucket.whitelistedadmin.main
+api-version: 1.20
 authors: [tudubucket]
 description: A Minecraft plugin for Server Administrator safety purposes
 website: https://tudubucket.dev
