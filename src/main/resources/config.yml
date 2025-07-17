@@ -13,10 +13,20 @@ date-format: "yyyy-MM-dd HH:MM:SS"
 admin-permissions:
  - "*" # All permissions
  - "luckperms.*"
+ - "worldedit.*"
  - "essentials.gamemode.creative"
+ - "bukkit.plugin"
  - "essentials.gamemode"
 
-# List of commands to bypass permissions check above (NPC/MyCMD/Skript Compatibility)
+# List of forbidden game modes for players
+# If the player has any of these game modes, they will be kicked from the server
+game-modes:
+  spectator: true
+  creative: true
+  adventure: false
+  survival: false # Survival mode is allowed for players
+
+# List of commands to bypass permissions check above (Compatibility for NPC & Menu commands execute as OP)
 ignore-commands:
  - "/help"
 
@@ -35,12 +45,7 @@ integrations:
     webhook:
       url: "https://discord.com/api/webhooks/0123456789123456789/webhook-token"
 
-# Hide the plugin
-plugin:
-  hide: true
-  message-unknown-command: 'Unknown command. Type "/help" for help.'
-
-# Messages to announce to integrations, placeholder, and color code supported
+# Messages to announce to integrations. Placeholder & color code supported
 messages:
   logging:
     unknown-admin: "{time} {player} have matched administrator permissions but not have whitelisted!"

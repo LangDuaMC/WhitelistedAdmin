@@ -8,20 +8,27 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.inventory.InventoryAction;
+import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
+import org.bukkit.event.player.PlayerGameModeChangeEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import javax.sql.rowset.spi.SyncFactoryException;
 import java.io.File;
 import java.io.IOException;
 import java.time.format.DateTimeFormatter;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 import java.util.logging.Logger;
 
 public class WhitelistAdminCommand implements CommandExecutor, Listener {
@@ -42,13 +49,37 @@ public class WhitelistAdminCommand implements CommandExecutor, Listener {
             return Objects.requireNonNull(config.getString(path))
                 .replace("{time}", formatter.toString())
                 .replace("{player}", player)
-                .replace("{current_address}", ipAddress);
+                .replace("{address}", ipAddress)
+                .replace("{current_address}", config.getString("whitelisted." + player, "null"));
         } catch (NullPointerException e) {
             Logger logger = plugin.getLogger();
             logger.warning("Unknown path [" + path + "] while getting config message");
             return path;
         }
         
+    }
+
+    static final boolean isFolia = checkFolia();
+
+    private static boolean checkFolia() {
+        try {
+            Class.forName("io.papermc.paper.threadedregions.RegionizedServer");
+            return true;
+        } catch (ClassNotFoundException e) {
+            return false;
+        }
+    }
+
+    public static void runTask(Plugin plugin, Runnable runnable, Player entity) {
+        if (isFolia) {
+            if (entity != null) {
+                plugin.getServer().getRegionScheduler().run(plugin, entity.getLocation(), scheduledTask -> runnable.run());
+            } else {
+                throw new IllegalArgumentException("Folia requires an Entity or Location for region scheduling.");
+            }
+        } else {
+            plugin.getServer().getScheduler().runTask(plugin, runnable);
+        }
     }
 
     public static boolean isValidIPv4(String ip) {
@@ -88,42 +119,42 @@ public class WhitelistAdminCommand implements CommandExecutor, Listener {
 
     public void checkNonWhitelisted(Player player, String type, String data) {
         FileConfiguration config = plugin.getConfig();
-        Logger logger = plugin.getLogger();
         List<String> permissions = config.getStringList("admin-permissions");
-        List<String> ignoredCommandList = config.getStringList("ignore-commands");
-        // SendMessage.send(player, String.join(", ", permissions));
-        if (config.getString("whitelisted." + player.getName()) == null) {
+        Set<String> ignoredCommandSet = new HashSet<>(config.getStringList("ignore-commands"));
+
+        String currentAddress = config.getString("whitelisted." + player.getName(), null);
+        String playerIP = player.getAddress().toString().replace("/", "").split(":")[0];
+        // plugin.getLogger().info("Checking non-whitelisted for player: " + player.getName() + " with IP: " + playerIP);
+        // plugin.getLogger().info(currentAddress == null ? "Current address is null" : "Current address: " + currentAddress);
+        // plugin.getLogger().info("Player IP: " + playerIP);
+        // plugin.getLogger().info("Type: " + type + ", Data: " + data);
+
+        if (type.contains("COMMAND") && ignoredCommandSet.contains(data)) {
+            return;
+        }
+        // plugin.getLogger().info("Checking permissions for player: " + player.getName());
+        if (currentAddress == null) {
             for (String permission: permissions) {
-                // SendMessage.send(player, permission + ": " + player.hasPermission(permission));
-                Boolean performKick = true;
+                // plugin.getLogger().info("Checking permission: " + permission + " for player: " + player.getName() + ": " + player.hasPermission(permission));
                 if (player.hasPermission(permission)) {
-                    if (type.contains("COMMAND")) {
-                        for (String cmd: ignoredCommandList) {
-                            if (cmd.equalsIgnoreCase(data)) {
-                                performKick = false;
-                                break;
-                            }
-                        }
-                    }
-                    if (performKick.equals(true)) {
-                        String playerIP = player.getAddress().toString().replace("/", "").split(":")[0];
-                        player.kickPlayer(ChatColor.translateAlternateColorCodes('&', getConfigMessage("messages.kick.unknown-admin", player.getName(), Objects.toString(player.getAddress()))));
-                        sendAnnouncement(getConfigMessage("messages.integration.unknown-admin", player.getName(), Objects.toString(player.getAddress())));
-                        String ftype = "";
-                        if (type.equals("JOIN")) {
-                            ftype = "login";
-                        }
-                        else if (type.equals("COMMAND_PRE_PROCESS")) {
-                            ftype = "payload command [" + data + "]";
-                        }
-                        logger.warning("Player " + player.getName() + " (" + playerIP  + ") attempted to " + ftype + " with Administrator permission: " + permission);
-                        
-                        return;
+                    player.kickPlayer(ChatColor.translateAlternateColorCodes('&', getConfigMessage("messages.kick.unknown-admin", player.getName(), Objects.toString(player.getAddress()))));
+                    if (type.equals("COMMAND_PRE_PROCESS")) {
+                        plugin.getLogger().warning("Player " + player.getName() + " (" + playerIP  + ") attempted to use command [" + data + "] with Administrator permission: " + permission);
+                    } else if (type.equals("GAME_MODE_CHANGE")) {
+                        plugin.getLogger().warning("Player " + player.getName() + " (" + playerIP  + ") attempted to change game mode to " + data + " with Administrator permission: " + permission);
                     }
                     return;
                 }
             }
+        } 
+        // plugin.getLogger().info("Checking address for player: " + player.getName());
+        if (!playerIP.equals(currentAddress)) {
+            player.kickPlayer(ChatColor.translateAlternateColorCodes('&', getConfigMessage("messages.kick.invalid-address", player.getName(), playerIP)));
+            plugin.getLogger().warning("Player " + player.getName() + " (" + playerIP  + ") attempted to interact with non-whitelisted IP Address.");
+            return;
         }
+        // sendAnnouncement(getConfigMessage("messages.integration.unknown-admin", player.getName(), Objects.toString(player.getAddress())));
+        return;
     }
 
     @Override
@@ -135,7 +166,6 @@ public class WhitelistAdminCommand implements CommandExecutor, Listener {
         }
 
         if (args[0].equals("reload")) {
-            // Reload the config
             plugin.reloadConfig();
             SendMessage.send(sender, "Configuration reloaded.");
             return true;
@@ -222,18 +252,33 @@ public class WhitelistAdminCommand implements CommandExecutor, Listener {
         }
     }
     
-    @EventHandler
-    public void onPlayerJoin(PlayerJoinEvent event) {
-        checkNonWhitelisted(event.getPlayer(), "JOIN", null);
-    }
+    // @EventHandler
+    // public void onPlayerJoin(PlayerJoinEvent event) {
+    //     checkNonWhitelisted(event.getPlayer(), "JOIN", null);
+    // }
 
     @EventHandler
     public void onPlayerCommandPreProcess(PlayerCommandPreprocessEvent event) {
         checkNonWhitelisted(event.getPlayer(), "COMMAND_PRE_PROCESS", event.getMessage());
     }
 
-    // @EventHandler
-    // public void onPlayerCommandSend(PlayerCommandSendEvent event) {
-    //     checkNonWhitelisted(event.getPlayer(), "COMMAND_PAYLOAD", event.getMessage());
-    // }
+    @EventHandler
+    public void onGameModeChange(PlayerGameModeChangeEvent event) {
+        FileConfiguration config = plugin.getConfig();
+        String gameMode = event.getNewGameMode().name().toLowerCase();
+        if (!config.getBoolean("game-modes." + gameMode, false)) {
+            return; // Game mode is allowed
+        }
+        checkNonWhitelisted(event.getPlayer(), "GAME_MODE_CHANGE", event.getNewGameMode().name());
+    }
+
+    @EventHandler
+    public void onCreativeInventoryOpen(InventoryOpenEvent event) {
+        FileConfiguration config = plugin.getConfig();
+        String gameMode = event.getPlayer().getGameMode().name().toLowerCase();
+        if (!config.getBoolean("game-modes." + gameMode, false)) {
+            return; // Game mode is allowed
+        }
+        checkNonWhitelisted((Player) event.getPlayer(), "GAME_MODE_CHANGE", event.getPlayer().getGameMode().name());
+    }
 }

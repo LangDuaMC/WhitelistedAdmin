@@ -2,6 +2,7 @@ name: WhitelistedAdmin
 version: '${project.version}'
 main: dev.tudubucket.whitelistedadmin.main
 api-version: 1.20
+folia-supported: true
 authors: [tudubucket]
 description: A Minecraft plugin for Server Administrator safety purposes
 website: https://tudubucket.dev
@@ -11,7 +12,6 @@ commands:
   whitelist-admin:
     description: Main command for WhitelistedAdmin plugin
     aliases:
-      - wla
       - wladmin
     permission: whitelistedadmin.wladmin
 
